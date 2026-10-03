@@ -1,0 +1,33 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ai_itsm_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - MONGODB_DATABASE=${MONGODB_DATABASE:-itsm_helpdesk}
+      - SERVICENOW_MODE=${SERVICENOW_MODE:-mock}
+      - SERVICENOW_URL=${SERVICENOW_URL:-https://dev00000.service-now.com}
+      - SERVICENOW_USERNAME=${SERVICENOW_USERNAME:-admin}
+      - SERVICENOW_PASSWORD=${SERVICENOW_PASSWORD:-}
+      - HF_MODEL_NAME=${HF_MODEL_NAME:-google/flan-t5-base}
+      - EMBEDDING_MODEL_NAME=${EMBEDDING_MODEL_NAME:-sentence-transformers/all-MiniLM-L6-v2}
+      - RAG_SIMILARITY_THRESHOLD=${RAG_SIMILARITY_THRESHOLD:-0.35}
+      - AI_CONFIDENCE_THRESHOLD=${AI_CONFIDENCE_THRESHOLD:-0.65}
+    volumes:
+      - ./backend/knowledge_base:/app/knowledge_base
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ai_itsm_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: always

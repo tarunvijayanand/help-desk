@@ -1,0 +1,14 @@
+# Secrets
+*.env
+config.json
+
+# Cache/Build
+__pycache__/
+node_modules/
+dist/
+
+# Logs
+*.log
+
+# Datasets
+datasets/
